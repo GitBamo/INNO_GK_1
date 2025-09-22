@@ -2,7 +2,7 @@ import React, { createContext, useContext, useMemo, useState } from 'react';
 import { Alert } from 'react-native';
 
 // Booking shape (guideline):
-// { id: string, room: string, start: string (ISO), end: string (ISO), note?: string, createdAt: string }
+// { id: string, room: string, start: ISO string, end: ISO string, by: string, note?: string, createdAt: ISO }
 
 const BookingsContext = createContext(null);
 
@@ -14,22 +14,24 @@ export function BookingsProvider({ children }) {
     const plus1h = new Date(now.getTime() + 60 * 60 * 1000);
     const plus2h = new Date(now.getTime() + 2 * 60 * 60 * 1000);
     return [
-      {
+        {
         id: 'seed-1',
-        room: 'Control Room',
+        room: 'Studie A',
         start: now.toISOString(),
         end: plus1h.toISOString(),
+        by: 'Anna',
         note: 'Vocal take',
         createdAt: new Date().toISOString(),
-      },
-      {
+        },
+        {
         id: 'seed-2',
         room: 'Live Room',
         start: plus1h.toISOString(),
         end: plus2h.toISOString(),
+        by: 'Jonas',
         note: 'Drum setup',
         createdAt: new Date().toISOString(),
-      },
+        },
     ];
   }
 
