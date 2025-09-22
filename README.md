@@ -2,26 +2,26 @@
 
 ## Kør
 i terminalen: 
-npm install
-npm run start
+- npm install
+- npm run start
 
 ## Mappestruktur
 
 INNO_GK_1/
-├─ App.js
-├─ README.md
-├─ src/
-│ ├─ navigation/
-│ │ └─ AppNavigator.js
-│ ├─ screens/
-│ │ ├─ HomeScreen.js // Liste/kalender-view
-│ │ ├─ CreateBookingScreen.js // Opret booking
-│ │ └─ MyBookingsScreen.js // Mine bookinger (liste)
-│ ├─ components/
-│ │ └─ BookingItem.js // Én booking i en liste
-│ └─ styles/
-│ ├─ colors.js
-│ └─ globalStyles.js // separat stylingfil
+- ├─ App.js
+- ├─ README.md
+- ├─ src/
+- │ ├─ navigation/
+- │ │ └─ AppNavigator.js
+- │ ├─ screens/
+- │ │ ├─ HomeScreen.js // Liste/kalender-view
+- │ │ ├─ CreateBookingScreen.js // Opret booking
+- │ │ └─ MyBookingsScreen.js // Mine bookinger (liste)
+- │ ├─ components/
+- │ │ └─ BookingItem.js // Én booking i en liste
+- │ └─ styles/
+- │ ├─ colors.js
+- │ └─ globalStyles.js // separat stylingfil
 
 ## Krav-check (INNT Aktivitet 1)
 
