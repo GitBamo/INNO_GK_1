@@ -43,6 +43,10 @@ export function BookingsProvider({ children }) {
     setBookings((prev) => prev.filter((x) => x.id !== id));
   }
 
+   function resetToSeed() {
+    setBookings(seed());
+  }
+
   // Simpel overlap-tjek på samme room (lukket interval [start, end))
   function hasOverlap({ room, start, end }) {
     const s = new Date(start).getTime();
@@ -85,7 +89,7 @@ export function BookingsProvider({ children }) {
   }
 
   const value = useMemo(
-    () => ({ bookings, addBooking, removeBooking, tryAddBooking }),
+    () => ({ bookings, addBooking, removeBooking, tryAddBooking, resetToSeed }),
     [bookings]
   );
 

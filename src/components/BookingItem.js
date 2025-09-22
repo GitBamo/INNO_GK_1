@@ -18,11 +18,18 @@ export default function BookingItem({ booking, onDelete }) {
       <Text style={styles.paragraph}>
         {fmt(booking.start)} → {fmt(booking.end)}
       </Text>
-      <Text style={styles.paragraph}>Booket af: {booking.by}</Text>
-      {booking.note ? (
-        <Text style={styles.paragraph}>Note: {booking.note}</Text>
-      ) : null}
-      {/* ...Slet-knap som før... */}
+      <Text style={styles.paragraph}>Booket af: {booking.by || 'ukendt'}</Text>
+      {booking.note ? <Text style={styles.paragraph}>Note: {booking.note}</Text> : null}
+
+      {!!onDelete && (
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: '#FF7A7A', marginTop: 10 }]}
+          onPress={() => onDelete(booking.id)}
+        >
+          <Text style={styles.buttonText}>Slet</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
+

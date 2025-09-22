@@ -1,18 +1,18 @@
-import React, { useMemo, useState } from 'react';
-import { View, Text, FlatList } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import styles from '../styles/globalStyles';
-import colors from '../styles/colors';
-import { useBookings } from '../state/BookingsContext';
-import { ROOMS } from '../constants/rooms';
+import React, { useMemo, useState } from "react";
+import { View, Text, FlatList } from "react-native";
+import { Calendar } from "react-native-calendars";
+import styles from "../styles/globalStyles";
+import colors from "../styles/colors";
+import { useBookings } from "../state/BookingsContext";
+import { ROOMS } from "../constants/rooms";
 
 function fmtTime(dt) {
   const d = new Date(dt);
-  const pad = (n) => String(n).padStart(2, '0');
+  const pad = (n) => String(n).padStart(2, "0");
   return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 function yyyymmdd(d) {
-  const pad = (n) => String(n).padStart(2, '0');
+  const pad = (n) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 function sameDay(iso, dayStr) {
@@ -21,7 +21,7 @@ function sameDay(iso, dayStr) {
 }
 
 export default function HomeScreen({ navigation }) {
-  const { bookings } = useBookings();
+  const { bookings, resetToSeed } = useBookings();
   const [selectedDate, setSelectedDate] = useState(() => yyyymmdd(new Date()));
 
   const markedDates = useMemo(
@@ -47,39 +47,44 @@ export default function HomeScreen({ navigation }) {
         onDayPress={(d) => setSelectedDate(d.dateString)}
         markedDates={markedDates}
         theme={{
-          calendarBackground: '#0B0F1A',
-          dayTextColor: '#E8ECF1',
-          monthTextColor: '#E8ECF1',
-          textSectionTitleColor: '#A6B0C3',
+          calendarBackground: "#0B0F1A",
+          dayTextColor: "#E8ECF1",
+          monthTextColor: "#E8ECF1",
+          textSectionTitleColor: "#A6B0C3",
           selectedDayBackgroundColor: colors.primary,
-          selectedDayTextColor: '#0B0F1A',
-          arrowColor: '#E8ECF1',
+          selectedDayTextColor: "#0B0F1A",
+          arrowColor: "#E8ECF1",
           todayTextColor: colors.accent,
         }}
         style={{ marginBottom: 12 }}
       />
 
       {/* Hurtige genveje */}
-      <View style={styles.card}>
-        <Text style={styles.paragraph}>Hurtige genveje</Text>
-        <View style={[styles.row, { marginTop: 8 }]}>
-          <Text
-            onPress={() => navigation.navigate('CreateBooking')}
-            style={{ color: colors.accent, fontWeight: '600' }}
-          >
-            + Opret booking
-          </Text>
-          <Text
-            onPress={() => navigation.navigate('MyBookings')}
-            style={{ color: colors.accent, fontWeight: '600' }}
-          >
-            Mine bookinger
-          </Text>
-        </View>
+      <View style={[styles.row, { marginTop: 8 }]}>
+        <Text
+          onPress={() => navigation.navigate("CreateBooking")}
+          style={{ color: colors.accent, fontWeight: "600" }}
+        >
+          + Opret booking
+        </Text>
+        <Text
+          onPress={() => navigation.navigate("MyBookings")}
+          style={{ color: colors.accent, fontWeight: "600" }}
+        >
+          Mine bookinger
+        </Text>
+        <Text
+          onPress={resetToSeed}
+          style={{ color: colors.accent, fontWeight: "600" }}
+        >
+          Nulstil demo-data
+        </Text>
       </View>
 
       {/* Bookinger for valgt dato (ALLE lejere) */}
-      <Text style={[styles.title, { marginVertical: 12 }]}>Bookinger — {selectedDate}</Text>
+      <Text style={[styles.title, { marginVertical: 12 }]}>
+        Bookinger — {selectedDate}
+      </Text>
       <FlatList
         data={dayBookings}
         keyExtractor={(item) => item.id}
@@ -91,10 +96,15 @@ export default function HomeScreen({ navigation }) {
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Text style={styles.paragraph}>
-              <Text style={{ fontWeight: '700' }}>{item.room}</Text> · {fmtTime(item.start)}–{fmtTime(item.end)}
+              <Text style={{ fontWeight: "700" }}>{item.room}</Text> ·{" "}
+              {fmtTime(item.start)}–{fmtTime(item.end)}
             </Text>
-            <Text style={styles.paragraph}>Booket af: {item.by}</Text>
-            {item.note ? <Text style={styles.paragraph}>Note: {item.note}</Text> : null}
+            <Text style={styles.paragraph}>
+              Booket af: {item.by || "ukendt"}
+            </Text>
+            {item.note ? (
+              <Text style={styles.paragraph}>Note: {item.note}</Text>
+            ) : null}
           </View>
         )}
       />
