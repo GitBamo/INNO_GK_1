@@ -1,14 +1,15 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
 import { Alert } from 'react-native';
 
-// Booking shape (guideline):
-// { id: string, room: string, start: ISO string, end: ISO string, by: string, note?: string, createdAt: ISO }
+// Booking shape:
+// { id: string, room: string, start: ISO, end: ISO, by: string, userId: string, note?: string, createdAt: ISO }
 
 const BookingsContext = createContext(null);
 
 export function BookingsProvider({ children }) {
   const [bookings, setBookings] = useState(() => seed());
 
+  // Seed med to eksempler: visualisering ved start
   function seed() {
     const now = new Date();
     const plus1h = new Date(now.getTime() + 60 * 60 * 1000);
@@ -20,6 +21,7 @@ export function BookingsProvider({ children }) {
         start: now.toISOString(),
         end: plus1h.toISOString(),
         by: 'Anna',
+        userId: 'u-anna',
         note: 'Vocal take',
         createdAt: new Date().toISOString(),
         },
@@ -29,6 +31,7 @@ export function BookingsProvider({ children }) {
         start: plus1h.toISOString(),
         end: plus2h.toISOString(),
         by: 'Jonas',
+        userId: 'u-jonas',
         note: 'Drum setup',
         createdAt: new Date().toISOString(),
         },

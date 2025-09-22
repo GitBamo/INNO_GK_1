@@ -11,7 +11,7 @@ function fmt(dt) {
   )}:${pad(d.getMinutes())}`;
 }
 
-export default function BookingItem({ booking, onDelete }) {
+export default function BookingItem({ booking, onDelete, owned = false }) {
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{booking.room}</Text>
@@ -21,9 +21,9 @@ export default function BookingItem({ booking, onDelete }) {
       <Text style={styles.paragraph}>Booket af: {booking.by || 'ukendt'}</Text>
       {booking.note ? <Text style={styles.paragraph}>Note: {booking.note}</Text> : null}
 
-      {!!onDelete && (
+      {owned && !!onDelete && (
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: '#FF7A7A', marginTop: 10 }]}
+          style={[styles.button, { backgroundColor: colors.danger, marginTop: 10 }]}
           onPress={() => onDelete(booking.id)}
         >
           <Text style={styles.buttonText}>Slet</Text>
@@ -32,4 +32,5 @@ export default function BookingItem({ booking, onDelete }) {
     </View>
   );
 }
+
 

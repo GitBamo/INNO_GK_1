@@ -4,7 +4,9 @@ import { Calendar } from "react-native-calendars";
 import styles from "../styles/globalStyles";
 import colors from "../styles/colors";
 import { useBookings } from "../state/BookingsContext";
+import { useAuth } from '../state/AuthContext';
 import { ROOMS } from "../constants/rooms";
+
 
 function fmtTime(dt) {
   const d = new Date(dt);
@@ -22,6 +24,7 @@ function sameDay(iso, dayStr) {
 
 export default function HomeScreen({ navigation }) {
   const { bookings, resetToSeed } = useBookings();
+  const { currentUser } = useAuth();
   const [selectedDate, setSelectedDate] = useState(() => yyyymmdd(new Date()));
 
   const markedDates = useMemo(
@@ -40,7 +43,10 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { marginBottom: 12 }]}>MusiCal</Text>
+      <Text style={[styles.title, { marginBottom: 4 }]}>MusiCal</Text>
+      <Text style={[styles.paragraph, { marginBottom: 12 }]}>
+        Logget ind som: <Text style={{ fontWeight: '700' }}>{currentUser.name}</Text>
+      </Text>
 
       {/* Månedskalender med valgt dato */}
       <Calendar
