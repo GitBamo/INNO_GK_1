@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import styles from "../styles/globalStyles";
 import colors from "../styles/colors";
 
@@ -12,19 +12,39 @@ function fmt(dt) {
 }
 
 export default function BookingItem({ booking, onDelete, owned = false }) {
+  const confirmDelete = () => {
+    Alert.alert(
+      "Slet booking",
+      "Er du sikker på, at du vil slette denne booking?",
+      [
+        { text: "Annullér", style: "cancel" },
+        {
+          text: "Slet",
+          style: "destructive",
+          onPress: () => onDelete?.(booking.id),
+        },
+      ]
+    );
+  };
+
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{booking.room}</Text>
       <Text style={styles.paragraph}>
         {fmt(booking.start)} → {fmt(booking.end)}
       </Text>
-      <Text style={styles.paragraph}>Booket af: {booking.by || 'ukendt'}</Text>
-      {booking.note ? <Text style={styles.paragraph}>Note: {booking.note}</Text> : null}
+      <Text style={styles.paragraph}>Booket af: {booking.by || "ukendt"}</Text>
+      {booking.note ? (
+        <Text style={styles.paragraph}>Note: {booking.note}</Text>
+      ) : null}
 
       {owned && !!onDelete && (
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: colors.danger, marginTop: 10 }]}
-          onPress={() => onDelete(booking.id)}
+          style={[
+            styles.button,
+            { backgroundColor: colors.danger, marginTop: 10 },
+          ]}
+          onPress={confirmDelete}
         >
           <Text style={styles.buttonText}>Slet</Text>
         </TouchableOpacity>
@@ -32,5 +52,3 @@ export default function BookingItem({ booking, onDelete, owned = false }) {
     </View>
   );
 }
-
-
