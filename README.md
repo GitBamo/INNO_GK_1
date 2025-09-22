@@ -21,8 +21,6 @@ INNO_GK_1/
 │ │ └─ MyBookingsScreen.js // Mine bookinger (liste)
 │ ├─ components/
 │ │ └─ BookingItem.js // Én booking i en liste
-│ ├─ lib/
-│ │ └─ storage.js // AsyncStorage wrapper
 │ └─ styles/
 │ ├─ colors.js
 │ └─ globalStyles.js // separat stylingfil
