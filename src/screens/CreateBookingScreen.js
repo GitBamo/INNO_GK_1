@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Switch,
+  Keyboard,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Calendar } from "react-native-calendars";
@@ -273,6 +274,12 @@ export default function CreateBookingScreen({ navigation }) {
             placeholder="Session note"
             multiline
             numberOfLines={3}
+            // Gør retur-tasten til 'Done/Go' og luk tastaturet i stedet for newline
+            returnKeyType="done"
+            blurOnSubmit={true}
+            onSubmitEditing={() => {
+              Keyboard.dismiss();
+            }}
             onFocus={() => {
               // scroll lidt efter fokus (vent til keyboard er oppe)
               setTimeout(
