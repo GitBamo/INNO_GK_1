@@ -42,6 +42,18 @@ function buildTimeSlots() {
 }
 const TIME_SLOTS = buildTimeSlots();
 
+function computeNudgeMessage(startIso, endIso) {
+  const durH = (new Date(endIso) - new Date(startIso)) / (1000 * 60 * 60);
+  const startH = new Date(startIso).getHours();
+  const endH = new Date(endIso).getHours();
+  const isPeak = (h) => h >= 16 && h < 22;
+  if (durH > 3)
+    return "Overvej at dele lange sessioner (>3t) i kortere blokke for fair fordeling.";
+  if (isPeak(startH) || isPeak(endH))
+    return "Peak-time booking: overvej at holde dig til ≤2t i prime time.";
+  return null;
+}
+
 export default function CreateBookingScreen({ navigation }) {
   const { tryAddBooking } = useBookings();
   const { currentUser } = useAuth();
@@ -74,17 +86,61 @@ export default function CreateBookingScreen({ navigation }) {
       );
       return;
     }
-    const booking = {
-      id: `b-${Date.now()}`,
-      room,
-      start: toIsoLocal(date, start),
-      end: toIsoLocal(date, end),
-      by: currentUser.name,
-      userId: currentUser.id,
-      note,
-      createdAt: new Date().toISOString(),
+
+    const shiftDate = (yyyymmdd, weeks) => {
+      const [Y, M, D] = yyyymmdd.split("-").map(Number);
+      const base = new Date(Y, M - 1, D);
+      base.setDate(base.getDate() + weeks * 7);
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${base.getFullYear()}-${pad(base.getMonth() + 1)}-${pad(
+        base.getDate()
+      )}`;
     };
-    if (tryAddBooking(booking)) navigation.navigate("MyBookings");
+
+    const OCCS = repeatWeekly ? 8 : 1;
+    const occurrences = [];
+    const nowId = Date.now();
+
+    for (let w = 0; w < OCCS; w++) {
+      const dStr = w === 0 ? date : shiftDate(date, w);
+      occurrences.push({
+        id: `b-${nowId}-${w}`,
+        room,
+        start: toIsoLocal(dStr, start),
+        end: toIsoLocal(dStr, end),
+        by: currentUser.name,
+        userId: currentUser.id,
+        note,
+        createdAt: new Date().toISOString(),
+      });
+    }
+
+    let okCount = 0;
+    let failCount = 0;
+
+    // Undertryk nudges inde i konteksten, når vi gentager ugentligt
+    const suppressNudges = repeatWeekly;
+
+    occurrences.forEach((occ) => {
+      const ok = tryAddBooking(occ, { showNudge: !suppressNudges });
+      ok ? okCount++ : failCount++;
+    });
+
+    // Vis én samlet nudge (hvis relevant) ved gentagelser:
+    if (repeatWeekly) {
+      const msg = computeNudgeMessage(occurrences[0].start, occurrences[0].end);
+      if (msg) {
+        Alert.alert("Nudge", msg);
+      }
+      Alert.alert(
+        "Gentagelser oprettet",
+        `Lykkedes: ${okCount} • Afvist: ${failCount}`
+      );
+    }
+
+    if (okCount > 0) {
+      navigation.navigate("MyBookings");
+    }
   }
 
   const markedDates = useMemo(
@@ -198,6 +254,15 @@ export default function CreateBookingScreen({ navigation }) {
                 </Picker>
               </View>
             </View>
+          </View>
+          {/* Gentag ugentligt (MVP: i alt 8 forekomster: uge 0..7) */}
+          <View
+            style={[styles.row, { alignItems: "center", marginBottom: 12 }]}
+          >
+            <Text style={[styles.paragraph, { flex: 1 }]}>
+              Gentag ugentligt (8 uger)
+            </Text>
+            <Switch value={repeatWeekly} onValueChange={setRepeatWeekly} />
           </View>
 
           {/* Note (valgfri) – multiline og auto-scroll ved fokus */}
