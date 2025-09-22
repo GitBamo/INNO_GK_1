@@ -2,13 +2,13 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import styles from '../styles/globalStyles';
 
-export default function MyBookingsScreen() {
+export default function CreateBookingScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Mine bookinger</Text>
+        <Text style={styles.title}>Ny booking</Text>
         <Text style={styles.paragraph}>
-          Her viser vi snart en liste (FlatList) med dine kommende/afsluttede bookinger.
+          Her kommer formularen (start/slut, lokale, note, evt. adgangskode).
         </Text>
       </View>
     </View>
