@@ -1,56 +1,138 @@
-# MusiCal (Music + Calendar)
+# MusiCal — Musikstudie-booking (MVP)
 
-## Kør
-i terminalen: 
+MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk 2–6 lejere om samme studie). App’en gør det nemt at se dagskalenderen, oprette sessions i faste rum og undgå overlap — med små “nudges” for fair brug i prime time.
+
+> **Repo-mappe:** 'INNO_GK_1/'  
+> **Teknologi:** React Native (Expo), JavaScript
+
+---
+
+# Kom i gang
+**Forudsætninger**
+- Node.js (LTS)
+- npm
+- Expo CLI (npx expo) eller Expo Go på telefon
+- iOS Simulator / Android Emulator (eller fysisk enhed via Expo Go)
 - npm install
 - npm run start
 
-## Mappestruktur
+## Installation & kørsel
+**i mappen INNO_GK_1**
+1. npm install
+- dernæst 2.a ellers 2.b
+2. (a) npm run start (tryk i (iOS) eller a (Android) (kræver simulator))
+2. (b) npx expo start
+
+---
+
+## Demo
+
+- **Videodemonstration:** _indsæt link til YouTube / GitHub video her_ ← _(påtkrævet i opgaven)_.
+
+---
+
+## Funktioner (MVP)
+
+- **Home (kalender + dagsliste)**
+
+  - Månedskalender (vælg dato) og dagsliste over alle bookinger (alle lejere).
+  - **Filtre:** kompakte _chips_ for **Lokale** (Alle / Studie A / Studie B / Live Room) og **Person** (Alle / unikke navne).
+  - **Hurtige genveje:** “+ Opret booking”, “Mine bookinger”, “Nulstil demo-data”.
+
+- **Ny booking**
+
+  - **Fast bruger (mock-login):** “Logget ind som: Bamo” (MVP for senere rigtig auth).
+  - **Input via kompakte selects:**
+    - Lokale: Studie A / Studie B / Live Room.
+    - Dato: kalender.
+    - Start/Slut: 30-min slots i 24h-format.
+  - **Overlap-tjek:** afviser bookinger, der overlapper i samme lokale.
+  - **Fair-use nudges:**
+    - Varighed > 3t → venlig nudge
+    - Prime time (16–22) → venlig nudge (en gang, også ved gentagelser).
+  - **Gentag ugentligt** _(MVP)_: opretter samme slot **8 uger** frem (afviser individuelt ved overlap og viser en samlet status).
+  - **Tastatur-robust formular:** feltet ruller i fokus, “Done/Go” lukker tastaturet i note-feltet.
+
+- **Mine bookinger**
+
+  - Viser **kun dine** bookinger ('userId'-ejerskab) og tillader sletning.
+  - **Slet-bekræftelse:** “Er du sikker på, at du vil slette?”.
+
+- **UI/UX**
+  - Mørk header/statusbar, centreret logo i top.
+  - Konsistent farvetema via 'colors.js'.
+  - Listekort med klare tider og “booket af”.
+
+> **Bemærk:** Der er **ingen persistent storage** i MVP’en (bevidst). Data lever i RAM, og “Nulstil demo-data” reseeder eksempelbookinger. Det matcher opgavekravet om et fungerende kode-MVP uden at kræve backend/databaser.
+
+---
+
+## Kravmatch (ifølge opgaven)
+
+- **≥ 3 screens/views**: Home, Ny booking, Mine bookinger ✅
+- **≥ 2 knapper (med funktion)**: navigation + slet + nulstil + m.fl. ✅
+- **≥ 1 liste**: dagsliste (Home) og “Mine bookinger” ✅
+- **Styling i separat fil**: 'src/styles/*' ✅
+- **README med video-link**: dette dokument ✅
+
+Øvrige leverancer (brugerinddragelse, refleksion, dokumentation og aflevering) håndteres i den **separate rapport** jf. opgavebeskrivelsen.
+
+---
+
+## Arkitektur
 
 INNO_GK_1/
-- ├─ App.js
-- ├─ README.md
-- ├─ src/
-- │ ├─ navigation/
-- │ │ └─ AppNavigator.js
-- │ ├─ screens/
-- │ │ ├─ HomeScreen.js // Liste/kalender-view
-- │ │ ├─ CreateBookingScreen.js // Opret booking
-- │ │ └─ MyBookingsScreen.js // Mine bookinger (liste)
-- │ ├─ components/
-- │ │ └─ BookingItem.js // Én booking i en liste
-- │ └─ styles/
-- │ ├─ colors.js
-- │ └─ globalStyles.js // separat stylingfil
+├─ App.js
+├─ assets/
+│ └─ app-logo.png
+└─ src/
+├─ navigation/
+│ │ └─ AppNavigator.js
+├─ screens/
+│ │ ├─ HomeScreen.js
+│ │ ├─ CreateBookingScreen.js
+│ │ └─ MyBookingsScreen.js
+├─ components/
+│ │ ├─ BookingItem.js
+│ │ ├─ Chip.js
+│ │ └─ SelectModal.js
+├─ state/
+│ │ ├─ AuthContext.js
+│ │ └─ BookingsContext.js
+├─ constants/
+│ │ └─ rooms.js # ['Studie A','Studie B','Live Room']
+└─ styles/
+├─ colors.js
+└─ globalStyles.js
 
-## Krav-check (INNT Aktivitet 1)
+---
 
-- React Native app med min. 3 screens
-- Min. 2 knapper (én navigerer)
-- Min. 1 liste (FlatList)
-- Styling i separat fil (src/styles/globalStyles.js)
-- Brugerinddragelse (2 interviews eller 15+ survey-svar)
-- Refleksion over læring (skrives i rapport)
-- Demovideo-link (indsættes her)
+## State management
 
-Se kursus/aktivitetens formalia og læringsmål i udleveret materiale.
+  - AuthContext (mock-bruger: id: u-bamo, name: Bamo).   Holder en fast bruger i MVP’en. Bruges til at vise “Logget ind som …”, til at sætte 'by/userId' på nye bookinger og til at filtrere “Mine bookinger”.
 
-## Brugerinddragelse (plan)
-Vi sigter mod 2 korte interviews (10–12 min) med musikere i studie-fællesskaber:
-- Formål: Forstå booking-vaner, fairness og behov for felter i formularen.
-- Spørgsmål (uddrag):
-  1) Hvordan planlægger I sessions i dag? Hvad frustrerer mest?
-  2) Hvad er “peak time” hos jer? Hvor lang bør en session være i prime time?
-  3) Hvilke oplysninger skal altid indtastes, og hvilke kan være valgfrie?
-  4) Hvordan håndterer I dobbeltbookinger og aflysninger?
+  - 'BookingsContext' (in-memory):  
+    - 'tryAddBooking(booking, { showNudge = true })' — validerer (slut > start), tjekker overlap i samme lokale, viser nudges og tilføjer booking, hvis alt er OK.
+    - 'removeBooking(id)' — sletter booking (bruges kun på **Mine bookinger**, dvs. kun egne bookinger).
+    - 'resetToSeed()' — re-seeder demo-data (udvikler/demobrug).
 
-**Artefakt:** Noter 3–5 fund (bullet points) og 2 konkrete UI-ændringer lavet på baggrund af feedback.
+## Data-model (booking)
+  Booking objekter indeholder:
+  - id: string
+  - room: 'Studie A', 'Studie B' eller 'Live Room'
+  - start: ISO datostreng
+  - end: ISO datostreng
+  - by: string (visningsnavn)
+  - userId: string (ejerskab)
+  - note: string (valgfri)
+  - createdAt: ISO datostreng
 
-## Refleksion (kladde)
-- Hvad lærte jeg om brugerbehov ift. fairness?
-- Hvilke dele af koden var sværest/nemmest (navigation, formular, validering)?
-- Evt. AI-brug: hvad blev genereret, hvad ændrede jeg, og hvorfor?
+---
 
-## Demovideo
-- Link: *(indsæt YouTube/GitHub-link)*
-- Scope i videoen: Opret booking → nudge ved long/peak → se i “Mine bookinger” → slet
+## Videre arbejde (idéer)
+- Rigtig login + members pr. studie.
+- Persistent storage (f.eks. Supabase/Firestore).
+- Avancerede gentagelser (antal/interval/slutdato).
+- Rolle-baseret rettighedsstyring (admin/medlem).
+- Delte “house rules” og peak-time kvoter.
+- ICS-eksport / kalender-sync.
