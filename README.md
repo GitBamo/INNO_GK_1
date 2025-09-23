@@ -33,7 +33,7 @@ MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk
 
 ## Demo
 
-- **Videodemonstration:** _indsæt link til YouTube / GitHub video her_ ← _(påtkrævet i opgaven)_.
+- **Videodemonstration:** https://youtu.be/5TbBG533pXw?si=Ho2dILBEEhTaR3JB 
 
 ---
 
