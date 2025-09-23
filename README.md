@@ -17,7 +17,7 @@ MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk
 - npm run start
 
 ## Installation & kørsel
-**i mappen INNO_GK_1**
+**I mappen INNO_GK_1 åben terminal:**
 1. npm install
 - dernæst 2.a ellers 2.b
 2. (a) npm run start (tryk i (iOS) eller a (Android) (kræver simulator))
