@@ -1,3 +1,5 @@
+**Github repository:** https://github.com/GitBamo/INNO_GK_1
+
 # MusiCal — Musikstudie-booking (MVP)
 
 MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk 2–6 lejere om samme studie). App’en gør det nemt at se dagskalenderen, oprette sessions i faste rum og undgå overlap — med små “nudges” for fair brug i prime time.
@@ -33,7 +35,7 @@ MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk
 
 ## Demo
 
-- **Videodemonstration:** https://youtu.be/5TbBG533pXw?si=Ho2dILBEEhTaR3JB 
+- **Videodemonstration:** https://youtu.be/5TbBG533pXw?si=Ho2dILBEEhTaR3JB
 
 ---
 
