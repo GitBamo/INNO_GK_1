@@ -8,7 +8,9 @@ MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk
 ---
 
 # Kom i gang
+
 **Forudsætninger**
+
 - Node.js (LTS)
 - npm
 - Expo CLI (npx expo) eller Expo Go på telefon
@@ -17,11 +19,15 @@ MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk
 - npm run start
 
 ## Installation & kørsel
+
 **I mappen INNO_GK_1 åben terminal:**
+
 1. npm install
-- dernæst 2.a ellers 2.b
-2. (a) npm run start (tryk i (iOS) eller a (Android) (kræver simulator))
-2. (b) npx expo start
+
+- dernæst 2 **eller** 3
+
+2. npm run start (dernæst tryk i (iOS) eller a (Android) (kræver simulator))
+3. ellers → npx expo start
 
 ---
 
@@ -72,7 +78,7 @@ MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk
 - **≥ 3 screens/views**: Home, Ny booking, Mine bookinger ✅
 - **≥ 2 knapper (med funktion)**: navigation + slet + nulstil + m.fl. ✅
 - **≥ 1 liste**: dagsliste (Home) og “Mine bookinger” ✅
-- **Styling i separat fil**: 'src/styles/*' ✅
+- **Styling i separat fil**: 'src/styles/\*' ✅
 - **README med video-link**: dette dokument ✅
 
 Øvrige leverancer (brugerinddragelse, refleksion, dokumentation og aflevering) håndteres i den **separate rapport** jf. opgavebeskrivelsen.
@@ -109,27 +115,30 @@ INNO_GK_1/
 
 ## State management
 
-  - AuthContext (mock-bruger: id: u-bamo, name: Bamo).   Holder en fast bruger i MVP’en. Bruges til at vise “Logget ind som …”, til at sætte 'by/userId' på nye bookinger og til at filtrere “Mine bookinger”.
+- AuthContext (mock-bruger: id: u-bamo, name: Bamo). Holder en fast bruger i MVP’en. Bruges til at vise “Logget ind som …”, til at sætte 'by/userId' på nye bookinger og til at filtrere “Mine bookinger”.
 
-  - 'BookingsContext' (in-memory):  
-    - 'tryAddBooking(booking, { showNudge = true })' — validerer (slut > start), tjekker overlap i samme lokale, viser nudges og tilføjer booking, hvis alt er OK.
-    - 'removeBooking(id)' — sletter booking (bruges kun på **Mine bookinger**, dvs. kun egne bookinger).
-    - 'resetToSeed()' — re-seeder demo-data (udvikler/demobrug).
+- 'BookingsContext' (in-memory):
+  - 'tryAddBooking(booking, { showNudge = true })' — validerer (slut > start), tjekker overlap i samme lokale, viser nudges og tilføjer booking, hvis alt er OK.
+  - 'removeBooking(id)' — sletter booking (bruges kun på **Mine bookinger**, dvs. kun egne bookinger).
+  - 'resetToSeed()' — re-seeder demo-data (udvikler/demobrug).
 
 ## Data-model (booking)
-  Booking objekter indeholder:
-  - id: string
-  - room: 'Studie A', 'Studie B' eller 'Live Room'
-  - start: ISO datostreng
-  - end: ISO datostreng
-  - by: string (visningsnavn)
-  - userId: string (ejerskab)
-  - note: string (valgfri)
-  - createdAt: ISO datostreng
+
+Booking objekter indeholder:
+
+- id: string
+- room: 'Studie A', 'Studie B' eller 'Live Room'
+- start: ISO datostreng
+- end: ISO datostreng
+- by: string (visningsnavn)
+- userId: string (ejerskab)
+- note: string (valgfri)
+- createdAt: ISO datostreng
 
 ---
 
 ## Videre arbejde (idéer)
+
 - Rigtig login + members pr. studie.
 - Persistent storage (f.eks. Supabase/Firestore).
 - Avancerede gentagelser (antal/interval/slutdato).
