@@ -124,19 +124,6 @@ INNO_GK_1/
   - 'removeBooking(id)' — sletter booking (bruges kun på **Mine bookinger**, dvs. kun egne bookinger).
   - 'resetToSeed()' — re-seeder demo-data (udvikler/demobrug).
 
-## Data-model (booking)
-
-Booking objekter indeholder:
-
-- id: string
-- room: 'Studie A', 'Studie B' eller 'Live Room'
-- start: ISO datostreng
-- end: ISO datostreng
-- by: string (visningsnavn)
-- userId: string (ejerskab)
-- note: string (valgfri)
-- createdAt: ISO datostreng
-
 ---
 
 ## Videre arbejde (idéer)
