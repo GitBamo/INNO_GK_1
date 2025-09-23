@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Alert } from "react-native";
 import styles from "../styles/globalStyles";
 import colors from "../styles/colors";
 
+// Formater dato/tid pænt
 function fmt(dt) {
   const d = new Date(dt);
   const pad = (n) => String(n).padStart(2, "0");
@@ -11,6 +12,17 @@ function fmt(dt) {
   )}:${pad(d.getMinutes())}`;
 }
 
+/*BookingItem er en genanvendelig React Native komponent, der viser information om én booking som et kort.
+Komponentens props:
+  - booking: booking-objektet med alle relevante data (rum, tid, bruger, note mm.)
+  - owned: hvis true, vises en slet-knap (kun for brugerens egne bookinger)
+  - onDelete: callback-funktion, der kaldes hvis brugeren bekræfter sletning
+
+Komponentens UI:
+  - Viser lokale, start/slut-tid, hvem der har booket og evt. note
+  - Hvis "owned" er true, vises en rød slet-knap, der åbner en bekræftelses-dialog
+  - Slet-knappen bruger Alert til at sikre, at brugeren bekræfter handlingen
+*/
 export default function BookingItem({ booking, onDelete, owned = false }) {
   const confirmDelete = () => {
     Alert.alert(

@@ -1,11 +1,23 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
 import { Alert } from "react-native";
 
-// Booking shape:
-// { id: string, room: string, start: ISO, end: ISO, by: string, userId: string, note?: string, createdAt: ISO }
-
+// Opret context til booking-data og funktioner
 const BookingsContext = createContext(null);
 
+
+/*
+BookingsProvider wrapper komponent til at give adgang til booking-data og funktioner i hele appen
+Seed med to eksempler ved start for visualisering (kan nulstilles via HomeScreen)
+Følgende funktioner eksponeres via context:
+- bookings: array af alle bookinger
+- addBooking(b): tilføj en booking (uden tjek)
+- removeBooking(id): slet booking med id
+- tryAddBooking(b, opts): forsøg at tilføje booking med tjek og nudges
+- resetToSeed(): nulstil til seed-data
+
+Overlap-tjekket er simpelt og tjekker kun for overlap i samme lokale.
+Nudges er blide advarsler ved lange bookinger eller peak-time brug.
+*/
 export function BookingsProvider({ children }) {
   const [bookings, setBookings] = useState(() => seed());
 
@@ -50,7 +62,7 @@ export function BookingsProvider({ children }) {
     setBookings(seed());
   }
 
-  // Simpel overlap-tjek på samme room (lukket interval [start, end))
+  // Simpel overlap-tjek på samme room (lukket interval (start, end))
   function hasOverlap({ room, start, end }) {
     const s = new Date(start).getTime();
     const e = new Date(end).getTime();
@@ -77,7 +89,7 @@ export function BookingsProvider({ children }) {
       return false;
     }
 
-    // Fair-use nudges (blid vejledning, ingen hård blokering)
+    // Fair-use nudges (ingen hård blokering)
     const durH = (new Date(b.end) - new Date(b.start)) / (1000 * 60 * 60);
     const startH = new Date(b.start).getHours();
     const endH = new Date(b.end).getHours();
@@ -110,6 +122,7 @@ export function BookingsProvider({ children }) {
   );
 }
 
+// Custom hook til at hente bookings og booking-funktioner
 export function useBookings() {
   const ctx = useContext(BookingsContext);
   if (!ctx) throw new Error("useBookings must be used within BookingsProvider");

@@ -21,7 +21,22 @@ import { useAuth } from "../state/AuthContext";
 import { ROOMS } from "../constants/rooms";
 import SelectModal from "../components/SelectModal";
 
-// ---------- helpers ----------
+/*
+Hjælpefunktioner til dato/tidshåndtering og nudges:
+
+- toIsoLocal(yyyymmdd, hhmm):
+    Konverterer en dato (fx '2025-09-23') og et tidspunkt (fx '10:00') til en ISO-string i lokal tid.
+    Bruges til at oprette start- og sluttidspunkter for bookinger.
+
+- buildTimeSlots():
+    Genererer alle mulige 30-minutters tidsintervaller på en dag ("00:00", "00:30", ... "23:30").
+    Bruges som valg i start/slut-tid dropdowns ved booking.
+
+- computeNudgeMessage(startIso, endIso):
+    Returnerer en venlig "nudge"-besked hvis bookingen er lang (>3t) eller ligger i prime time (16-22).
+    Bruges til at informere brugeren om fair-use regler (MVP).
+*/
+
 function toIsoLocal(yyyymmdd, hhmm) {
   const [Y, M, D] = yyyymmdd.split("-").map(Number);
   const [h, m] = hhmm.split(":").map(Number);
@@ -52,12 +67,17 @@ function computeNudgeMessage(startIso, endIso) {
   const startH = new Date(startIso).getHours();
   const endH = new Date(endIso).getHours();
   const isPeak = (h) => h >= 16 && h < 22;
-  if (durH > 3) return "Overvej at dele lange sessioner (>3t) i kortere blokke for fair fordeling.";
-  if (isPeak(startH) || isPeak(endH)) return "Peak-time booking: overvej at holde dig til ≤2t i prime time.";
+  if (durH > 3)
+    return "Overvej at dele lange sessioner (>3t) i kortere blokke for fair fordeling.";
+  if (isPeak(startH) || isPeak(endH))
+    return "Peak-time booking: overvej at holde dig til ≤2t i prime time.";
   return null;
 }
 
-// ---------- local styles used in JSX ----------
+/*
+selectBox og selectText bruges som inline-styles til de trykbare valg-bokse (lokale/rum, start, slut)
+i booking-formularen. De sikrer ensartet udseende og padding på tværs af alle select-felter.
+*/
 const selectBox = {
   backgroundColor: "#1b2340",
   borderRadius: 8,
@@ -68,50 +88,66 @@ const selectBox = {
 };
 const selectText = { color: colors.text, fontWeight: "600" };
 
-// ---------- component ----------
 export default function CreateBookingScreen({ navigation }) {
-  const { tryAddBooking } = useBookings();
-  const { currentUser } = useAuth();
+  const { tryAddBooking } = useBookings(); // Henter funktionen til at forsøge at tilføje en booking fra BookingsContext.
+  const { currentUser } = useAuth(); // Henter den aktuelle bruger fra AuthContext.
 
-  const [repeatWeekly, setRepeatWeekly] = useState(false);
+  const [repeatWeekly, setRepeatWeekly] = useState(false); // Boolean state, styrer om bookingen skal gentages ugentligt (8 uger).
+  // Styrer om de respektive SelectModal-komponenter (for rum, start, slut) er åbne.
   const [roomOpen, setRoomOpen] = useState(false);
   const [startOpen, setStartOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
 
-  const headerHeight = useHeaderHeight();
-  const scrollRef = useRef(null);
+  const headerHeight = useHeaderHeight(); // Henter headerens højde, bruges til at justere KeyboardAvoidingView så tastaturet ikke overlapper indholdet.
+  const scrollRef = useRef(null); // Ref til ScrollView, bruges til at scrolle til bunden når note-feltet får fokus.
 
-  const [room, setRoom] = useState(ROOMS[0]);
+  const [room, setRoom] = useState(ROOMS[0]); // State for valgt rum, initialiseret til første rum i ROOMS-arrayet.
+  // Beregner dags dato som en streng på formatet 'YYYY-MM-DD'. useMemo sikrer at værdien kun beregnes én gang ved mount.
   const todayStr = useMemo(() => {
     const d = new Date();
     const pad = (n) => String(n).padStart(2, "0");
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   }, []);
-  const [date, setDate] = useState(todayStr);
+  const [date, setDate] = useState(todayStr); // State for valgt dato, initialiseret til dags dato.
+  // State for valgt start- og sluttidspunkt.
   const [start, setStart] = useState("10:00");
   const [end, setEnd] = useState("11:00");
-  const [note, setNote] = useState(""); // <-- kun denne note-state (den øverste er fjernet)
+  const [note, setNote] = useState(""); // State for note-feltet (valgfri tekst).
 
-  const isValid = useMemo(() => room && date && start && end, [room, date, start, end]);
+  // useMemo bruges til at memoizere om formularen er gyldig (alle felter udfyldt).
+  // isValid opdateres kun når room, date, start eller end ændres.
+  const isValid = useMemo(
+    () => room && date && start && end,
+    [room, date, start, end]
+  );
 
+  // Handler-funktion til at indsende booking:
   function onSubmit() {
     if (!isValid) {
-      Alert.alert("Manglende felter", "Vælg venligst lokale, dato, start- og sluttid.");
+      Alert.alert(
+        "Manglende felter",
+        "Vælg venligst lokale, dato, start- og sluttid."
+      );
       return;
     }
 
+    // shiftDate: Hjælpefunktion til at lægge uger til en dato (bruges til gentagelser)
     const shiftDate = (yyyymmdd, weeks) => {
       const [Y, M, D] = yyyymmdd.split("-").map(Number);
       const base = new Date(Y, M - 1, D);
       base.setDate(base.getDate() + weeks * 7);
       const pad = (n) => String(n).padStart(2, "0");
-      return `${base.getFullYear()}-${pad(base.getMonth() + 1)}-${pad(base.getDate())}`;
+      return `${base.getFullYear()}-${pad(base.getMonth() + 1)}-${pad(
+        base.getDate()
+      )}`;
     };
 
     const OCCS = repeatWeekly ? 8 : 1;
+    // Antal bookinger der skal oprettes (1 eller 8 ved gentagelse)
     const occurrences = [];
     const nowId = Date.now();
 
+    // Opretter alle booking-objekter (én pr. uge hvis gentagelse)
     for (let w = 0; w < OCCS; w++) {
       const dStr = w === 0 ? date : shiftDate(date, w);
       occurrences.push({
@@ -130,25 +166,37 @@ export default function CreateBookingScreen({ navigation }) {
     let failCount = 0;
     const suppressNudges = repeatWeekly;
 
+    // Forsøger at tilføje hver booking via tryAddBooking (validering, overlap, nudges)
     occurrences.forEach((occ) => {
       const ok = tryAddBooking(occ, { showNudge: !suppressNudges });
       ok ? okCount++ : failCount++;
     });
 
+    // Hvis gentagelse: vis nudge og feedback om hvor mange bookinger lykkedes/afvist
     if (repeatWeekly) {
       const msg = computeNudgeMessage(occurrences[0].start, occurrences[0].end);
       if (msg) Alert.alert("Nudge", msg);
-      Alert.alert("Gentagelser oprettet", `Lykkedes: ${okCount} • Afvist: ${failCount}`);
+      Alert.alert(
+        "Gentagelser oprettet",
+        `Lykkedes: ${okCount} • Afvist: ${failCount}`
+      );
     }
 
+    // Naviger til "Mine bookinger" hvis mindst én booking lykkedes
     if (okCount > 0) navigation.navigate("MyBookings");
   }
 
+  // Memoized objekt til at markere valgt dato i kalenderen
   const markedDates = useMemo(
     () => ({ [date]: { selected: true, selectedColor: colors.accent } }),
     [date]
   );
 
+  /*
+  Returnerer hele UI'en for booking-formularen:
+  Indeholder felter til valg af lokale, dato, start/slut-tid, note, gentagelse og en opret-knap.
+  Bruger ScrollView og KeyboardAvoidingView for god mobil-UX, samt SelectModal til valg af tid/rum.
+  */
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -165,7 +213,8 @@ export default function CreateBookingScreen({ navigation }) {
           <Text style={styles.title}>Ny booking</Text>
 
           <Text style={[styles.paragraph, { marginBottom: 12 }]}>
-            Logget ind som: <Text style={{ fontWeight: "700" }}>{currentUser.name}</Text>
+            Logget ind som:{" "}
+            <Text style={{ fontWeight: "700" }}>{currentUser.name}</Text>
           </Text>
 
           {/* Lokale */}
@@ -227,8 +276,12 @@ export default function CreateBookingScreen({ navigation }) {
           </View>
 
           {/* Gentag ugentligt */}
-          <View style={[styles.row, { alignItems: "center", marginBottom: 12 }]}>
-            <Text style={[styles.paragraph, { flex: 1 }]}>Gentag ugentligt (8 uger)</Text>
+          <View
+            style={[styles.row, { alignItems: "center", marginBottom: 12 }]}
+          >
+            <Text style={[styles.paragraph, { flex: 1 }]}>
+              Gentag ugentligt (8 uger)
+            </Text>
             <Switch value={repeatWeekly} onValueChange={setRepeatWeekly} />
           </View>
 
@@ -243,7 +296,12 @@ export default function CreateBookingScreen({ navigation }) {
             returnKeyType="done"
             blurOnSubmit={true}
             onSubmitEditing={() => Keyboard.dismiss()}
-            onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 150)}
+            onFocus={() =>
+              setTimeout(
+                () => scrollRef.current?.scrollToEnd({ animated: true }),
+                150
+              )
+            }
             style={{
               backgroundColor: "#1b2340",
               color: "white",
@@ -255,7 +313,10 @@ export default function CreateBookingScreen({ navigation }) {
             }}
           />
 
-          <TouchableOpacity style={[styles.button, { backgroundColor: colors.accent }]} onPress={onSubmit}>
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: colors.accent }]}
+            onPress={onSubmit}
+          >
             <Text style={styles.buttonText}>Opret booking</Text>
           </TouchableOpacity>
         </View>
@@ -266,7 +327,10 @@ export default function CreateBookingScreen({ navigation }) {
           title="Vælg lokale"
           options={ROOMS}
           value={room}
-          onSelect={(v) => { setRoom(v); setRoomOpen(false); }}
+          onSelect={(v) => {
+            setRoom(v);
+            setRoomOpen(false);
+          }}
           onClose={() => setRoomOpen(false)}
         />
         <SelectModal
@@ -274,7 +338,10 @@ export default function CreateBookingScreen({ navigation }) {
           title="Vælg start"
           options={TIME_SLOTS}
           value={start}
-          onSelect={(v) => { setStart(v); setStartOpen(false); }}
+          onSelect={(v) => {
+            setStart(v);
+            setStartOpen(false);
+          }}
           onClose={() => setStartOpen(false)}
         />
         <SelectModal
@@ -282,7 +349,10 @@ export default function CreateBookingScreen({ navigation }) {
           title="Vælg slut"
           options={TIME_SLOTS}
           value={end}
-          onSelect={(v) => { setEnd(v); setEndOpen(false); }}
+          onSelect={(v) => {
+            setEnd(v);
+            setEndOpen(false);
+          }}
           onClose={() => setEndOpen(false)}
         />
       </ScrollView>
