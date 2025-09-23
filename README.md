@@ -88,28 +88,28 @@ MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk
 ## Arkitektur
 
 INNO_GK_1/
-- ├─ App.js
-- ├─ assets/
-- │ └─ app-logo.png
-- └─ src/
-- ├─ navigation/
-- │ │ └─ AppNavigator.js
-- ├─ screens/
-- │ │ ├─ HomeScreen.js
-- │ │ ├─ CreateBookingScreen.js
-- │ │ └─ MyBookingsScreen.js
-- ├─ components/
-- │ │ ├─ BookingItem.js
-- │ │ ├─ Chip.js
-- │ │ └─ SelectModal.js
-- ├─ state/
-- │ │ ├─ AuthContext.js
-- │ │ └─ BookingsContext.js
-- ├─ constants/
-- │ │ └─ rooms.js # ['Studie A','Studie B','Live Room']
-- └─ styles/
-- ├─ colors.js
-- └─ globalStyles.js
+├── App.js
+├── assets/
+│   └── app-logo.png
+└── src/
+    ├── navigation/
+    │   └── AppNavigator.js
+    ├── screens/
+    │   ├── HomeScreen.js
+    │   ├── CreateBookingScreen.js
+    │   └── MyBookingsScreen.js
+    ├── components/
+    │   ├── BookingItem.js
+    │   ├── Chip.js
+    │   └── SelectModal.js
+    ├── state/
+    │   ├── AuthContext.js
+    │   └── BookingsContext.js
+    ├── constants/
+    │   └── rooms.js   # ['Studie A','Studie B','Live Room']
+    └── styles/
+        ├── colors.js
+        └── globalStyles.js
 
 ---
 
