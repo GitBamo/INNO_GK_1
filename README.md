@@ -71,8 +71,6 @@ MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk
   - Konsistent farvetema via 'colors.js'.
   - Listekort med klare tider og “booket af”.
 
-> **Bemærk:** Der er **ingen persistent storage** i MVP’en (bevidst). Data lever i RAM, og “Nulstil demo-data” reseeder eksempelbookinger. Det matcher opgavekravet om et fungerende kode-MVP uden at kræve backend/databaser.
-
 ---
 
 ## Kravmatch (ifølge opgaven)
@@ -119,7 +117,7 @@ INNO_GK_1/
 
 ## State management
 
-- AuthContext (mock-bruger: id: u-bamo, name: Bamo). Holder en fast bruger i MVP’en. Bruges til at vise “Logget ind som …”, til at sætte 'by/userId' på nye bookinger og til at filtrere “Mine bookinger”.
+- AuthContext (mock-bruger: id: u-bamo, name: Bamo). Holder en fast bruger i MVP’en. Bruges til at vise “Logget ind som …” + til at sætte 'by/userId' på nye bookinger og til at filtrere “Mine bookinger”.
 
 - 'BookingsContext' (in-memory):
   - 'tryAddBooking(booking, { showNudge = true })' — validerer (slut > start), tjekker overlap i samme lokale, viser nudges og tilføjer booking, hvis alt er OK.
@@ -144,7 +142,7 @@ Booking objekter indeholder:
 ## Videre arbejde (idéer)
 
 - Rigtig login + members pr. studie.
-- Persistent storage (f.eks. Supabase/Firestore).
+- Persistent storage.
 - Avancerede gentagelser (antal/interval/slutdato).
 - Rolle-baseret rettighedsstyring (admin/medlem).
 - Delte “house rules” og peak-time kvoter.
