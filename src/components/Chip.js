@@ -16,7 +16,7 @@ UI:
 
 Eksempel på brug: <Chip label="Studie A" selected={true} onPress={...} />. For eksempel se; src/screens/HomeScreen.js
 */
-export default function Chip({ label, selected, onPress }) {
+export default function Chip({label, selected, onPress}) {
   return (
     <Pressable
       onPress={onPress}
