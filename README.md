@@ -49,7 +49,7 @@ MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk
 
 - **Ny booking**
 
-  - **Fast bruger (mock-login):** “Logget ind som: Bamo” (MVP for senere rigtig auth).
+  - Login håndteres via `AuthContext`. App'en starter uden en hardcoded demo-bruger; `currentUser` vises når en bruger er logget ind.
   - **Input via kompakte selects:**
     - Lokale: Studie A / Studie B / Live Room.
     - Dato: kalender.
@@ -117,7 +117,8 @@ INNO_GK_1/
 
 ## State management
 
-- AuthContext (mock-bruger: id: u-bamo, name: Bamo). Holder en fast bruger i MVP’en. Bruges til at vise “Logget ind som …” + til at sætte 'by/userId' på nye bookinger og til at filtrere “Mine bookinger”.
+- AuthContext (plads til rigtig auth). App'en starter uden en hardcoded bruger.
+  AuthContext eksponerer `currentUser`, `login(user)` og `logout()` og kan tilpasses til at bruge server-baseret login/token-håndtering.
 
 - 'BookingsContext' (in-memory):
   - 'tryAddBooking(booking, { showNudge = true })' — validerer (slut > start), tjekker overlap i samme lokale, viser nudges og tilføjer booking, hvis alt er OK.

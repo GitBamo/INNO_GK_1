@@ -155,8 +155,8 @@ export default function CreateBookingScreen({ navigation }) {
         room,
         start: toIsoLocal(dStr, start),
         end: toIsoLocal(dStr, end),
-        by: currentUser.name,
-        userId: currentUser.id,
+        by: currentUser ? currentUser.name : "ukendt",
+        userId: currentUser ? currentUser.id : null,
         note,
         createdAt: new Date().toISOString(),
       });
@@ -213,8 +213,14 @@ export default function CreateBookingScreen({ navigation }) {
           <Text style={styles.title}>Ny booking</Text>
 
           <Text style={[styles.paragraph, { marginBottom: 12 }]}>
-            Logget ind som:{" "}
-            <Text style={{ fontWeight: "700" }}>{currentUser.name}</Text>
+            {currentUser ? (
+              <>
+                Logget ind som:{" "}
+                <Text style={{ fontWeight: "700" }}>{currentUser.name}</Text>
+              </>
+            ) : (
+              "Du er ikke logget ind"
+            )}
           </Text>
 
           {/* Lokale */}

@@ -18,8 +18,21 @@ Dette giver brugeren et hurtigt overblik over egne bookinger og mulighed for at 
 */
 
 export default function MyBookingsScreen() {
-  const { bookings, removeBooking } = useBookings(); // Hent bookinger fra BookingsContext.js 
+  const { bookings, removeBooking } = useBookings(); // Hent bookinger fra BookingsContext.js
   const { currentUser } = useAuth(); // Hent nuværende bruger fra AuthContext.js
+  // Hvis ingen bruger er logget ind, vis en venlig besked (vi venter på serverauth)
+  if (!currentUser) {
+    return (
+      <View style={styles.container}>
+        <Text style={[styles.title, { marginBottom: 12 }]}>Mine bookinger</Text>
+        <View style={styles.card}>
+          <Text style={styles.paragraph}>
+            Du er ikke logget ind. Log ind for at se dine bookinger.
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   /*
   Filtrer og sorter bookinger så kun brugerens egne vises, nyeste først
