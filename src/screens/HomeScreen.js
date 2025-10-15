@@ -107,31 +107,6 @@ export default function HomeScreen({ navigation }) {
         style={{ marginBottom: 12 }}
       />
 
-      {/* Hurtige genveje */}
-      <View style={styles.card}>
-        <Text style={styles.paragraph}>Hurtige genveje</Text>
-        <View style={[styles.row, { marginTop: 8, flexWrap: "wrap" }]}>
-          <Text
-            onPress={() => navigation.navigate("CreateBooking")}
-            style={{ color: colors.accent, fontWeight: "600", marginRight: 12 }}
-          >
-            + Opret booking
-          </Text>
-          <Text
-            onPress={() => navigation.navigate("MyBookings")}
-            style={{ color: colors.accent, fontWeight: "600", marginRight: 12 }}
-          >
-            Mine bookinger
-          </Text>
-          <Text
-            onPress={resetToSeed}
-            style={{ color: colors.accent, fontWeight: "600" }}
-          >
-            Nulstil demo-data
-          </Text>
-        </View>
-      </View>
-
       {/* Filtre som CHIPS (kompakt) */}
       <View style={[styles.card, { marginTop: 12 }]}>
         <Text style={[styles.paragraph, { marginBottom: 8 }]}>Filtre</Text>

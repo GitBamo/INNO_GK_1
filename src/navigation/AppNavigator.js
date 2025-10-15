@@ -1,6 +1,8 @@
 import React, { memo } from "react";
 import { Image, Pressable, Platform } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
 import CreateBookingScreen from "../screens/CreateBookingScreen";
 import MyBookingsScreen from "../screens/MyBookingsScreen";
@@ -8,6 +10,7 @@ import colors from "../styles/colors";
 
 // Stack bruges til at oprette navigation mellem appens forskellige skærme (stack navigation).
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 // LOGO importerer appens logo-billede, så det kan vises i headeren på alle skærme.
 const LOGO = require("../../assets/app-logo.png");
@@ -44,21 +47,38 @@ const LogoTitle = memo(function LogoTitle({ onPress }) {
 // Her tilføjes alle hovedskærme (Home, CreateBooking, MyBookings) som Stack.Screen.
 // Hver skærm får logoet vist i headeren, og der kan tilføjes titler eller andre header-indstillinger pr. skærm.
 // Dette er det centrale sted hvor navigation og header-udseende styres for hele appen.
-export default function AppNavigator() {
+function MainTabs() {
   return (
-    <Stack.Navigator
-      screenOptions={{
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
         headerStyle: { backgroundColor: colors.background },
         headerTintColor: colors.text,
-        headerTitleAlign: "center", // Centrer logoet
+        headerTitleAlign: "center",
         headerShadowVisible: false,
         headerBackTitleVisible: false,
-      }}
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.text,
+        tabBarStyle: { backgroundColor: colors.background, borderTopWidth: 0 },
+        tabBarShowLabel: true,
+        tabBarIcon: ({ color, size }) => {
+          if (route.name === "Home") {
+            return <Ionicons name="home-outline" size={size} color={color} />;
+          } else if (route.name === "CreateBooking") {
+            return (
+              <Ionicons name="add-circle-outline" size={size} color={color} />
+            );
+          } else if (route.name === "MyBookings") {
+            return (
+              <Ionicons name="calendar-outline" size={size} color={color} />
+            );
+          }
+        },
+      })}
     >
-      <Stack.Screen
+      <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={({ navigation }) => ({
+        options={{
           headerTitle: () => (
             <Image
               source={LOGO}
@@ -66,12 +86,13 @@ export default function AppNavigator() {
               resizeMode="contain"
             />
           ),
-        })}
+          title: "Forside",
+        }}
       />
-      <Stack.Screen
+      <Tab.Screen
         name="CreateBooking"
         component={CreateBookingScreen}
-        options={({ navigation }) => ({
+        options={{
           headerTitle: () => (
             <Image
               source={LOGO}
@@ -79,13 +100,13 @@ export default function AppNavigator() {
               resizeMode="contain"
             />
           ),
-          title: "Ny booking",
-        })}
+          title: "Opret booking",
+        }}
       />
-      <Stack.Screen
+      <Tab.Screen
         name="MyBookings"
         component={MyBookingsScreen}
-        options={({ navigation }) => ({
+        options={{
           headerTitle: () => (
             <Image
               source={LOGO}
@@ -94,8 +115,12 @@ export default function AppNavigator() {
             />
           ),
           title: "Mine bookinger",
-        })}
+        }}
       />
-    </Stack.Navigator>
+    </Tab.Navigator>
   );
+}
+
+export default function AppNavigator() {
+  return <MainTabs />;
 }
