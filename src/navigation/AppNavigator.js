@@ -6,6 +6,10 @@ import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
 import CreateBookingScreen from "../screens/CreateBookingScreen";
 import MyBookingsScreen from "../screens/MyBookingsScreen";
+import ProfileScreen from "../screens/ProfileScreen";
+import LoginScreen from "../screens/LoginScreen";
+import RegisterScreen from "../screens/RegisterScreen";
+import { useAuth } from "../state/AuthContext";
 import colors from "../styles/colors";
 
 // Stack bruges til at oprette navigation mellem appens forskellige skærme (stack navigation).
@@ -71,6 +75,8 @@ function MainTabs() {
             return (
               <Ionicons name="calendar-outline" size={size} color={color} />
             );
+          } else if (route.name === "Profile") {
+            return <Ionicons name="person-outline" size={size} color={color} />;
           }
         },
       })}
@@ -117,10 +123,53 @@ function MainTabs() {
           title: "Mine bookinger",
         }}
       />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerTitle: () => (
+            <Image
+              source={LOGO}
+              style={{ width: 160, height: 36 }}
+              resizeMode="contain"
+            />
+          ),
+          title: "Min profil",
+        }}
+      />
     </Tab.Navigator>
   );
 }
 
 export default function AppNavigator() {
+  // Hvis vi har brug for en auth-flow: vis Login/Register når brugeren ikke er logget ind.
+  const Stack = createNativeStackNavigator();
+  const { currentUser } = useAuth();
+
+  if (!currentUser) {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: colors.background },
+          headerTintColor: colors.text,
+          headerTitleAlign: "center",
+          headerShadowVisible: false,
+          headerBackTitleVisible: false,
+        }}
+      >
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ title: "Log ind" }}
+        />
+        <Stack.Screen
+          name="Register"
+          component={RegisterScreen}
+          options={{ title: "Opret konto" }}
+        />
+      </Stack.Navigator>
+    );
+  }
+
   return <MainTabs />;
 }
