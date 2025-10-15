@@ -87,7 +87,9 @@ export default function HomeScreen({ navigation }) {
       <Text style={[styles.title, { marginBottom: 4 }]}>MusiCal</Text>
       <Text style={[styles.paragraph, { marginBottom: 12 }]}>
         Logget ind som:{" "}
-        <Text style={{ fontWeight: "700" }}>{currentUser.name}</Text>
+        <Text style={{ fontWeight: "700" }}>
+          {currentUser ? currentUser.name : "ukendt"}
+        </Text>
       </Text>
 
       {/* Kalender */}

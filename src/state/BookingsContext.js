@@ -4,7 +4,6 @@ import { Alert } from "react-native";
 // Opret context til booking-data og funktioner
 const BookingsContext = createContext(null);
 
-
 /*
 BookingsProvider wrapper komponent til at give adgang til booking-data og funktioner i hele appen
 Seed med to eksempler ved start for visualisering (kan nulstilles via HomeScreen)
@@ -19,36 +18,9 @@ Overlap-tjekket er simpelt og tjekker kun for overlap i samme lokale.
 Nudges er blide advarsler ved lange bookinger eller peak-time brug.
 */
 export function BookingsProvider({ children }) {
-  const [bookings, setBookings] = useState(() => seed());
+  const [bookings, setBookings] = useState([]);
 
-  // Seed med to eksempler: visualisering ved start
-  function seed() {
-    const now = new Date();
-    const plus1h = new Date(now.getTime() + 60 * 60 * 1000);
-    const plus2h = new Date(now.getTime() + 2 * 60 * 60 * 1000);
-    return [
-      {
-        id: "seed-1",
-        room: "Studie A",
-        start: now.toISOString(),
-        end: plus1h.toISOString(),
-        by: "Anna",
-        userId: "u-anna",
-        note: "Vocal take",
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: "seed-2",
-        room: "Live Room",
-        start: plus1h.toISOString(),
-        end: plus2h.toISOString(),
-        by: "Jonas",
-        userId: "u-jonas",
-        note: "Drum setup",
-        createdAt: new Date().toISOString(),
-      },
-    ];
-  }
+  // Seed-funktion fjernet: starter nu altid med tomt array
 
   function addBooking(b) {
     setBookings((prev) => [b, ...prev]);
@@ -59,7 +31,7 @@ export function BookingsProvider({ children }) {
   }
 
   function resetToSeed() {
-    setBookings(seed());
+    setBookings([]);
   }
 
   // Simpel overlap-tjek på samme room (lukket interval (start, end))
