@@ -86,7 +86,9 @@ export default function LoginScreen({ navigation }) {
               style={{ position: "absolute", right: 12, top: 18 }}
               onPress={() => setShowPassword((s) => !s)}
               accessibilityRole="button"
-              accessibilityLabel={showPassword ? "Skjul kodeord" : "Vis kodeord"}
+              accessibilityLabel={
+                showPassword ? "Skjul kodeord" : "Vis kodeord"
+              }
             />
           </View>
 
