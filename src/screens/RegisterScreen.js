@@ -16,9 +16,20 @@ export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function onRegister() {
+    setError("");
+    if (password !== confirm) {
+      setError("Kodeordene er ikke ens.");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Kodeord skal være mindst 6 tegn.");
+      return;
+    }
     setLoading(true);
     const ok = await signUp({
       name: name.trim(),
@@ -95,6 +106,34 @@ export default function RegisterScreen({ navigation }) {
               marginBottom: 12,
             }}
           />
+
+          <Text style={styles.paragraph}>Gentag kodeord</Text>
+          <TextInput
+            value={confirm}
+            onChangeText={setConfirm}
+            placeholder="Gentag kodeord"
+            placeholderTextColor={colors.muted}
+            secureTextEntry
+            style={{
+              backgroundColor: "#1b2340",
+              color: "white",
+              borderRadius: 8,
+              padding: 12,
+              marginTop: 6,
+              marginBottom: 12,
+            }}
+          />
+
+          {error ? (
+            <Text
+              style={[
+                styles.paragraph,
+                { color: colors.danger, marginBottom: 12 },
+              ]}
+            >
+              {error}
+            </Text>
+          ) : null}
 
           <TouchableOpacity
             style={[styles.button, { backgroundColor: colors.accent }]}
