@@ -30,6 +30,11 @@ export function BookingsProvider({ children }) {
     setBookings((prev) => prev.filter((x) => x.id !== id));
   }
 
+  // Fjern alle bookinger for en bestemt bruger (bruges ved slet konto)
+  function removeAllForUser(userId) {
+    setBookings((prev) => prev.filter((x) => x.userId !== userId));
+  }
+
   function resetToSeed() {
     setBookings([]);
   }
@@ -83,7 +88,14 @@ export function BookingsProvider({ children }) {
   }
 
   const value = useMemo(
-    () => ({ bookings, addBooking, removeBooking, tryAddBooking, resetToSeed }),
+    () => ({
+      bookings,
+      addBooking,
+      removeBooking,
+      removeAllForUser,
+      tryAddBooking,
+      resetToSeed,
+    }),
     [bookings]
   );
 

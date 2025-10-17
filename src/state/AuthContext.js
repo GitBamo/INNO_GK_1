@@ -67,8 +67,29 @@ export function AuthProvider({ children }) {
     setCurrentUser(null);
   }
 
+  // Slet konto (kun demo/in-memory). Fjerner brugeren fra userStore og logger ud
+  async function deleteAccount() {
+    if (!currentUser) return false;
+    try {
+      const email = currentUser.email;
+      if (email && userStore[email]) {
+        delete userStore[email];
+      } else {
+        // fallback: ryd alle poster der matcher id
+        for (const [key, val] of Object.entries(userStore)) {
+          if (val.id === currentUser.id) delete userStore[key];
+        }
+      }
+      setCurrentUser(null);
+      return true;
+    } catch (e) {
+      Alert.alert("Kunne ikke slette konto", "Prøv igen om lidt.");
+      return false;
+    }
+  }
+
   const value = useMemo(
-    () => ({ currentUser, signUp, signIn, signOut }),
+    () => ({ currentUser, signUp, signIn, signOut, deleteAccount }),
     [currentUser]
   );
 
