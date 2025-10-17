@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
 import styles from "../styles/globalStyles";
 import colors from "../styles/colors";
 import { useAuth } from "../state/AuthContext";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function RegisterScreen({ navigation }) {
   const { signUp } = useAuth();
@@ -18,16 +19,33 @@ export default function RegisterScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Live-validering
+  const passwordError = useMemo(() => {
+    if (!password) return "";
+    if (password.length < 6) return "Kodeord skal være mindst 6 tegn.";
+    return "";
+  }, [password]);
+
+  const confirmError = useMemo(() => {
+    if (!confirm) return "";
+    if (confirm !== password) return "Kodeordene er ikke ens.";
+    return "";
+  }, [confirm, password]);
 
   async function onRegister() {
     setError("");
-    if (password !== confirm) {
-      setError("Kodeordene er ikke ens.");
-      return;
-    }
-    if (password.length < 6) {
-      setError("Kodeord skal være mindst 6 tegn.");
+    if (
+      passwordError ||
+      confirmError ||
+      !name.trim() ||
+      !email.trim() ||
+      !password
+    ) {
+      // Fejl vises inline via live-validering
       return;
     }
     setLoading(true);
@@ -46,8 +64,9 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: colors.background }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 88 : 0}
     >
       <View style={styles.container}>
         <View style={styles.card}>
@@ -91,38 +110,86 @@ export default function RegisterScreen({ navigation }) {
           />
 
           <Text style={styles.paragraph}>Kodeord</Text>
-          <TextInput
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Kodeord"
-            placeholderTextColor={colors.muted}
-            secureTextEntry
-            style={{
-              backgroundColor: "#1b2340",
-              color: "white",
-              borderRadius: 8,
-              padding: 12,
-              marginTop: 6,
-              marginBottom: 12,
-            }}
-          />
+          <View style={{ position: "relative" }}>
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Kodeord"
+              placeholderTextColor={colors.muted}
+              secureTextEntry={!showPassword}
+              style={{
+                backgroundColor: "#1b2340",
+                color: "white",
+                borderRadius: 8,
+                padding: 12,
+                paddingRight: 44,
+                marginTop: 6,
+                marginBottom: 8,
+              }}
+            />
+            <Ionicons
+              name={showPassword ? "eye-outline" : "eye-off-outline"}
+              size={22}
+              color={colors.muted}
+              style={{ position: "absolute", right: 12, top: 18 }}
+              onPress={() => setShowPassword((s) => !s)}
+              accessibilityRole="button"
+              accessibilityLabel={
+                showPassword ? "Skjul kodeord" : "Vis kodeord"
+              }
+            />
+          </View>
+          {passwordError ? (
+            <Text
+              style={[
+                styles.paragraph,
+                { color: colors.danger, marginBottom: 8 },
+              ]}
+            >
+              {passwordError}
+            </Text>
+          ) : null}
 
           <Text style={styles.paragraph}>Gentag kodeord</Text>
-          <TextInput
-            value={confirm}
-            onChangeText={setConfirm}
-            placeholder="Gentag kodeord"
-            placeholderTextColor={colors.muted}
-            secureTextEntry
-            style={{
-              backgroundColor: "#1b2340",
-              color: "white",
-              borderRadius: 8,
-              padding: 12,
-              marginTop: 6,
-              marginBottom: 12,
-            }}
-          />
+          <View style={{ position: "relative" }}>
+            <TextInput
+              value={confirm}
+              onChangeText={setConfirm}
+              placeholder="Gentag kodeord"
+              placeholderTextColor={colors.muted}
+              secureTextEntry={!showConfirm}
+              style={{
+                backgroundColor: "#1b2340",
+                color: "white",
+                borderRadius: 8,
+                padding: 12,
+                paddingRight: 44,
+                marginTop: 6,
+                marginBottom: 8,
+              }}
+            />
+            <Ionicons
+              name={showConfirm ? "eye-outline" : "eye-off-outline"}
+              size={22}
+              color={colors.muted}
+              style={{ position: "absolute", right: 12, top: 18 }}
+              onPress={() => setShowConfirm((s) => !s)}
+              accessibilityRole="button"
+              accessibilityLabel={
+                showConfirm ? "Skjul gentagelse" : "Vis gentagelse"
+              }
+            />
+          </View>
+          {confirmError ? (
+            <Text
+              style={[
+                styles.paragraph,
+                { color: colors.danger, marginBottom: 12 },
+              ]}
+            >
+              {confirmError}
+            </Text>
+          ) : null}
 
           {error ? (
             <Text
