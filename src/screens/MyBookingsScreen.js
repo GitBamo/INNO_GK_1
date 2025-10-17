@@ -1,10 +1,9 @@
 import React, { useMemo } from "react";
-import { View, FlatList, Text, Alert, Pressable } from "react-native";
+import { View, FlatList, Text } from "react-native";
 import styles from "../styles/globalStyles";
 import { useBookings } from "../state/BookingsContext";
 import { useAuth } from "../state/AuthContext";
 import BookingItem from "../components/BookingItem";
-import colors from "../styles/colors";
 
 /*
 MyBookingsScreen viser en liste over den aktuelle brugers egne bookinger.
@@ -19,8 +18,8 @@ Dette giver brugeren et hurtigt overblik over egne bookinger og mulighed for at 
 */
 
 export default function MyBookingsScreen() {
-  const { bookings, removeBooking, removeAllForUser } = useBookings(); // Hent bookinger fra BookingsContext.js
-  const { currentUser, deleteAccount } = useAuth(); // Hent nuværende bruger fra AuthContext.js
+  const { bookings, removeBooking } = useBookings(); // Hent bookinger fra BookingsContext.js
+  const { currentUser } = useAuth(); // Hent nuværende bruger fra AuthContext.js
   // Hvis ingen bruger er logget ind, vis en venlig besked (vi venter på serverauth)
   if (!currentUser) {
     return (
@@ -50,44 +49,7 @@ export default function MyBookingsScreen() {
   // Returner UI med liste over brugerens bookinger vha. FlatList og BookingItem (React-komponent)
   return (
     <View style={styles.container}>
-      <View
-        style={[
-          styles.row,
-          {
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 12,
-          },
-        ]}
-      >
-        <Text style={styles.title}>Mine bookinger</Text>
-        <Pressable
-          onPress={() => {
-            Alert.alert(
-              "Slet konto",
-              "Er du sikker på, at du vil slette din konto? Dette sletter også alle dine bookinger.",
-              [
-                { text: "Annuller", style: "cancel" },
-                {
-                  text: "Slet",
-                  style: "destructive",
-                  onPress: async () => {
-                    try {
-                      removeAllForUser(currentUser.id);
-                      await deleteAccount();
-                    } catch (e) {}
-                  },
-                },
-              ]
-            );
-          }}
-          accessibilityRole="button"
-        >
-          <Text style={{ color: colors.danger, fontWeight: "700" }}>
-            Slet konto
-          </Text>
-        </Pressable>
-      </View>
+      <Text style={[styles.title, { marginBottom: 12 }]}>Mine bookinger</Text>
       <FlatList
         data={myBookings}
         keyExtractor={(item) => item.id}
