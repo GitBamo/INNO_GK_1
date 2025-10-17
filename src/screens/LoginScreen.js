@@ -10,11 +10,13 @@ import {
 import styles from "../styles/globalStyles";
 import colors from "../styles/colors";
 import { useAuth } from "../state/AuthContext";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function LoginScreen({ navigation }) {
   const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function onLogin() {
@@ -60,21 +62,33 @@ export default function LoginScreen({ navigation }) {
           />
 
           <Text style={styles.paragraph}>Kodeord</Text>
-          <TextInput
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Kodeord"
-            placeholderTextColor={colors.muted}
-            secureTextEntry
-            style={{
-              backgroundColor: "#1b2340",
-              color: "white",
-              borderRadius: 8,
-              padding: 12,
-              marginTop: 6,
-              marginBottom: 12,
-            }}
-          />
+          <View style={{ position: "relative" }}>
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Kodeord"
+              placeholderTextColor={colors.muted}
+              secureTextEntry={!showPassword}
+              style={{
+                backgroundColor: "#1b2340",
+                color: "white",
+                borderRadius: 8,
+                padding: 12,
+                paddingRight: 44,
+                marginTop: 6,
+                marginBottom: 12,
+              }}
+            />
+            <Ionicons
+              name={showPassword ? "eye-outline" : "eye-off-outline"}
+              size={22}
+              color={colors.muted}
+              style={{ position: "absolute", right: 12, top: 18 }}
+              onPress={() => setShowPassword((s) => !s)}
+              accessibilityRole="button"
+              accessibilityLabel={showPassword ? "Skjul kodeord" : "Vis kodeord"}
+            />
+          </View>
 
           <TouchableOpacity
             style={[styles.button, { backgroundColor: colors.accent }]}
