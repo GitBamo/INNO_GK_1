@@ -5,7 +5,7 @@
 MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk 2–6 lejere om samme studie). App’en gør det nemt at se dagskalenderen, oprette sessions i faste rum og undgå overlap — med små “nudges” for fair brug i prime time.
 
 > **Repo-mappe:** 'INNO_GK_1/'  
-> **Teknologi:** React Native (Expo), JavaScript
+> **Teknologi:** React Native (Expo), JavaScript, Firebase (Auth + Realtime DB)
 
 ---
 
@@ -35,7 +35,7 @@ MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk
 
 ## Demo
 
-- **Videodemonstration:** https://youtu.be/5TbBG533pXw?si=Ho2dILBEEhTaR3JB
+- **Videodemonstration:** https://youtube.com/shorts/2C6YasqPmSo?feature=share
 
 ---
 
@@ -45,7 +45,6 @@ MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk
 
   - Månedskalender (vælg dato) og dagsliste over alle bookinger (alle lejere).
   - **Filtre:** kompakte _chips_ for **Lokale** (Alle / Studie A / Studie B / Live Room) og **Person** (Alle / unikke navne).
-  - **Hurtige genveje:** “+ Opret booking”, “Mine bookinger”, “Nulstil demo-data”.
 
 - **Ny booking**
 
@@ -75,63 +74,13 @@ MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk
 
 ## Kravmatch (ifølge opgaven)
 
-- **≥ 3 screens/views**: Home, Ny booking, Mine bookinger ✅
-- **≥ 2 knapper (med funktion)**: navigation + slet + nulstil + m.fl. ✅
-- **≥ 1 liste**: dagsliste (Home) og “Mine bookinger” ✅
+- **≥ 5 screens/views**: Home, Ny booking, Mine bookinger ✅
+- **≥ 2 nye knapper (med funktion)**: navigation + slet + nulstil + m.fl. ✅
+- **≥ Navigation mellen skærme**: Tab + Stack (via AppNavigator.js)✅
+- **skal kunne gemme eller hente data**: Firebase ✅
 - **Styling i separat fil**: 'src/styles/\*' ✅
 - **README med video-link**: dette dokument ✅
 
 Øvrige leverancer (brugerinddragelse, refleksion, dokumentation og aflevering) håndteres i den **separate rapport** jf. opgavebeskrivelsen.
 
 ---
-
-## Arkitektur
-
-```plaintext
-INNO_GK_1/
-├── App.js
-├── assets/
-│   └── app-logo.png
-└── src/
-  ├── navigation/
-  │   └── AppNavigator.js
-  ├── screens/
-  │   ├── HomeScreen.js
-  │   ├── CreateBookingScreen.js
-  │   └── MyBookingsScreen.js
-  ├── components/
-  │   ├── BookingItem.js
-  │   ├── Chip.js
-  │   └── SelectModal.js
-  ├── state/
-  │   ├── AuthContext.js
-  │   └── BookingsContext.js
-  ├── constants/
-  │   └── rooms.js   # ['Studie A','Studie B','Live Room']
-  └── styles/
-    ├── colors.js
-    └── globalStyles.js
-```
-
----
-
-## State management
-
-- AuthContext (plads til rigtig auth). App'en starter uden en hardcoded bruger.
-  AuthContext eksponerer `currentUser`, `login(user)` og `logout()` og kan tilpasses til at bruge server-baseret login/token-håndtering.
-
-- 'BookingsContext' (in-memory):
-  - 'tryAddBooking(booking, { showNudge = true })' — validerer (slut > start), tjekker overlap i samme lokale, viser nudges og tilføjer booking, hvis alt er OK.
-  - 'removeBooking(id)' — sletter booking (bruges kun på **Mine bookinger**, dvs. kun egne bookinger).
-  - 'resetToSeed()' — re-seeder demo-data (udvikler/demobrug).
-
----
-
-## Videre arbejde (idéer)
-
-- Rigtig login + members pr. studie.
-- Persistent storage.
-- Avancerede gentagelser (antal/interval/slutdato).
-- Rolle-baseret rettighedsstyring (admin/medlem).
-- Delte “house rules” og peak-time kvoter.
-- ICS-eksport / kalender-sync.
