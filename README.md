@@ -77,7 +77,7 @@ MusiCal er en simpel, innovativ booking-app til musikstudiefællesskaber (typisk
 - **≥ 5 screens/views**: Home, Ny booking, Mine bookinger ✅
 - **≥ 2 nye knapper (med funktion)**: navigation + slet + nulstil + m.fl. ✅
 - **≥ Navigation mellen skærme**: Tab + Stack (via AppNavigator.js)✅
-- **skal kunne gemme eller hente data**: Firebase ✅
+- **Skal kunne gemme eller hente data**: Firebase ✅
 - **Styling i separat fil**: 'src/styles/\*' ✅
 - **README med video-link**: dette dokument ✅
 
